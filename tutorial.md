@@ -17,5 +17,5 @@ for (let i = 0; i < ProductObj.length; i++) {
 ```
 which is used for not existing product add. After product add remove the object from the array that's remove redundency check for prev product
 
-- create a new queue for inventory which will return the product count
-- listen product count from order and give response order is possible or not
+- create a new queue for inventory which will return the product count and the message response
+- listen product count and the response from inventory and give response in the http request
