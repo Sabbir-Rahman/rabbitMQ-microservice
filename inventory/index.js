@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const express = require('express')
 
-const { addProductInventory } = require('./controllers/inventoryController')
+const { productOrderInventory } = require('./controllers/inventoryController')
 
 const app = express()
 
@@ -49,7 +49,9 @@ async function connect() {
     const connection = await amqp.connect('amqp://localhost:5672')
     const channel = await connection.createChannel()
     // check queue exist or not if not then create
-    const result = await channel.assertQueue('jobs')
+    await channel.assertQueue('inventory')
+
+    
 
     channel.consume('abc', message => {
       const input = JSON.parse(message.content.toString())
@@ -67,7 +69,8 @@ async function connect() {
 
     // Product added
     for (let i = 0; i < ProductObj.length; i++) {
-      await addProductInventory(ProductObj[i])
+      const response = await productOrderInventory(ProductObj[i])
+      console.log(response)
       ProductObj.splice(i,1)
     }
 

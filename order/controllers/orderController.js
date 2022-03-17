@@ -8,7 +8,7 @@ async function connect() {
     connection = await amqp.connect("amqp://localhost:5672")
     channel = await connection.createChannel()
     // check queue exist or not if not then create
-    await channel.assertQueue("abc")
+    await channel.assertQueue("order")
   } catch (ex) {
     console.error(ex)
   }
