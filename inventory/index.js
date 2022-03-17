@@ -59,6 +59,7 @@ async function connect() {
       ProductObj.push(input)
       // again call the function
       connect()
+      channel.ack(message)
     })
 
     
@@ -67,6 +68,7 @@ async function connect() {
     // Product added
     for (let i = 0; i < ProductObj.length; i++) {
       await addProductInventory(ProductObj[i])
+      ProductObj.splice(i,1)
     }
 
     console.log('Waiting for messages')

@@ -3,7 +3,7 @@ POST http://localhost:5002/order/create
 Content-Type: application/json 
 
 { 
-  "productId": "62115a7cd7fd542eadc2a88c",
+  "productId": "62115a7cd7fd542eadc2a88d",
   "productName": "ABC product",
   "quantity": 2,
   "price": 100
