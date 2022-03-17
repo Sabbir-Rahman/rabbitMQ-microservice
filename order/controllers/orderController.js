@@ -16,6 +16,7 @@ async function connect() {
 
 const createOrder = async (req, res) => {
   connect()
+  let response 
   const { productId, productName, quantity, price } = req.body
 
   const newOrderService = {
@@ -25,13 +26,21 @@ const createOrder = async (req, res) => {
     price
   }
 
-  const response = await orderService.create(newOrderService)
+  const newOrder = await orderService.create(newOrderService)
 
-  await channel.sendToQueue('abc', Buffer.from(JSON.stringify(response)))
-  console.log(`Job sent successfully ${response}`)
+  await channel.sendToQueue('order', Buffer.from(JSON.stringify(newOrder)))
+  console.log(`Job sent successfully ${newOrder}`)
+
+
+  await channel.consume('inventory', message => {
+    const input = JSON.parse(message.content.toString())
+    response = input
+    channel.ack(message)
+  })
+
   await channel.close()
   await connection.close()
-
+  
   return res.status(200).json(response)
 }
 

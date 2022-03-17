@@ -53,7 +53,7 @@ async function connect() {
 
     
 
-    channel.consume('abc', message => {
+    channel.consume('order', message => {
       const input = JSON.parse(message.content.toString())
       console.log(
         `Product order is received with productId: ${input.productId}`
@@ -72,6 +72,12 @@ async function connect() {
       const response = await productOrderInventory(ProductObj[i])
       console.log(response)
       ProductObj.splice(i,1)
+
+      // queue for inventory
+      await channel.assertQueue('inventory')
+      await channel.sendToQueue('inventory', Buffer.from(JSON.stringify(response)))
+      console.log(`Job sent successfully ${response}`)
+
     }
 
     console.log('Waiting for messages')
