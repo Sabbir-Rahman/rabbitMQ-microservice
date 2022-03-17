@@ -7,8 +7,8 @@ const requiredString = {
 }
 
 const orderService = mongoose.Schema({
-  orderId: mongoose.Types.orderService,
-  productName: requiredString,
+  productId: mongoose.Types.ObjectId,
+  productName: String,
   quantity: Number,
   price: Number
 })
