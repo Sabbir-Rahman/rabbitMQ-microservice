@@ -1,5 +1,8 @@
 const mongoose = require('mongoose')
 const express = require('express')
+
+const { addProductInventory } = require('./controllers/inventoryController')
+
 const app = express()
 
 require('dotenv').config()
@@ -7,7 +10,7 @@ require('dotenv').config()
 const PORT = process.env.PORT || 5000
 const basicRoutes = require('./routers/basicRouter')
 
-async function connect() {
+async function dbconnect() {
   const dbUri = process.env.MONGODB_CONNECTION_URL
 
   try {
@@ -22,6 +25,7 @@ async function connect() {
 
 app.listen(PORT, async () => {
   console.log(`Server running on ${PORT}`)
+  await dbconnect()
   await connect()
 })
 
@@ -33,9 +37,14 @@ app.use('/basic', basicRoutes)
 // amqp = advance message queue protocol
 const amqp = require('amqplib')
 
-connect()
+
+let ProductObj = []
 
 async function connect() {
+  let productObj = {}
+  let addProduct
+  
+
   try {
     const connection = await amqp.connect('amqp://localhost:5672')
     const channel = await connection.createChannel()
@@ -44,13 +53,28 @@ async function connect() {
 
     channel.consume('abc', message => {
       const input = JSON.parse(message.content.toString())
-      console.log(`Received job with input ${input.productId}`)
-
+      console.log(
+        `Product order is received with productId: ${input.productId}`
+      )
+      ProductObj.push(input)
+      // again call the function
+      connect()
     })
+
+    
+    // console.log(`Add product status: ${addProduct}`)
+
+    // Product added
+    for (let i = 0; i < ProductObj.length; i++) {
+      await addProductInventory(ProductObj[i])
+    }
 
     console.log('Waiting for messages')
   } catch (ex) {
     console.error(ex)
   }
+
+  
+    
 }
 

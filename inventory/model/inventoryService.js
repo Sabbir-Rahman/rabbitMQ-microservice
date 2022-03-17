@@ -7,10 +7,10 @@ const requiredString = {
 }
 
 const inventoryService = mongoose.Schema({
-  productId: mongoose.Types.orderService,
+  productId: mongoose.Types.ObjectId,
   productName: String,
-  productQuantity: Number,
-  productPrice: Number
+  quantity: Number,
+  price: Number
 })
 
 module.exports = mongoose.model('inventoryService', inventoryService)
